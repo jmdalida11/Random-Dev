@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Game</title>
+</head>
+<body>
+	<canvas id="gameCanvas" width="300", height="250">If you see this, your browser is outdated</canvas>
+	<script src="Player.js"></script>
+	<script src="Enemy.js"></script>
+	<script src="helper.js"></script>
+	<script>
+		
+		var canvas = document.getElementById('gameCanvas');
+		var context = canvas.getContext('2d');
+		
+		var GAME_WIDTH = canvas.width;
+		var GAME_HEIGHT = canvas.height;
+		
+		var gameData = { gameWidth: GAME_WIDTH, gameHeight : GAME_HEIGHT };
+		
+		var background = new ImageLoader().getImage('img/bg.png');	
+		var player;
+		var enemies = [];
+		
+		var bgX = 0;
+		//initialize
+		function init(){
+			player = new Player(gameData,50,160,25,30);		
+			
+			for(var i=0;i<5;i++){
+				
+				var yPos = [160,210];
+				
+				enemies.push(new Enemy(gameData,GAME_WIDTH + 100 * i,yPos[Math.round(Math.random() * 1)],25,30));
+				
+			}
+			
+		}	
+		// update function
+		function update(){
+			
+			bgX--;
+			
+			if(bgX < -GAME_WIDTH){
+				bgX = 0;
+			}
+			
+			player.update();
+			
+			for(var i=0;i<enemies.length;i++){
+				
+				enemy = enemies[i];
+				enemy.update();
+				
+			}
+			
+		}
+		// render function
+		function render(){
+			
+			context.clearRect(0,0,GAME_WIDTH,GAME_HEIGHT);
+			
+			context.drawImage(background,bgX,0,GAME_WIDTH,GAME_HEIGHT);
+			context.drawImage(background,bgX + GAME_WIDTH,0,GAME_WIDTH,GAME_HEIGHT);
+			
+			player.render(context);
+			for(var i=0;i<enemies.length;i++){
+				
+				enemy = enemies[i];
+				enemy.render(context);
+				
+			}
+		}
+		init();
+		setInterval(function(){
+			update();
+			render();
+		}, 1000 / 30);
+	</script>
+	
+</body>
+</html>

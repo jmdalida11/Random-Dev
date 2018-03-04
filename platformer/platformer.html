@@ -1,0 +1,129 @@
+<html>
+<body>
+	
+	<canvas id="mycanvas" width="500" height="400"></canvas>
+	<script src="player.js"></script>
+	<script src="block.js"></script>
+	<script src="level.js"></script>
+	<script src="coin.js"></script>
+	<script src="helper.js"></script>
+	<script>
+		
+		var canvas = document.getElementById('mycanvas');
+		var context = canvas.getContext('2d');
+		
+		var player;
+		var blocks = [];
+		var coins = [];
+		function init(){
+			player = new Player(0,0);
+			var lvl = new Level();
+			for(var i=0;i<lvl.stage.length;i++){
+				var st = lvl.stage[i];
+				for(var j=0;j<st.length;j++){
+					if(st[j] == '-')
+						blocks.push(new Block(j,i));
+					
+					if(st[j] == 'o')
+						coins.push(new Coin(j,i));
+					
+					if(st[j] == 'p'){
+						player.x = j * 10; 
+						player.y = i * 10;
+					}
+						
+				}
+			}
+			
+		}
+		
+		function update(){
+			player.update();
+			
+			for(var i=0;i<blocks.length;i++){
+				player.collideSide(blocks[i].x,blocks[i].y,blocks[i].scale,blocks[i].scale);
+			}
+			
+			
+		}
+		
+		function render(){
+			context.clearRect(0,0,canvas.width,canvas.height);
+			context.fillStyle = 'white';
+			context.fillRect(0,0,canvas.width,canvas.height);
+			
+			player.render(context);
+			
+			for(var i=0;i<blocks.length;i++){
+				blocks[i].render(context);
+			}
+			
+			for(var i=0;i<coins.length;i++){
+				coins[i].render(context);
+			}
+			
+		}
+		
+		init();
+		setInterval(function(){
+			update();
+			render();
+		}, 1000/30);
+		
+	window.addEventListener('keydown', function(e){
+	//	alert(e.keyCode);
+		
+		switch(e.keyCode){
+			
+			case 39:
+				player.xSpeed = 3;
+				player.moving = true;
+				break;
+			case 37:
+				player.xSpeed = -3;
+				player.moving = true;
+				break;
+			case 38:
+				player.ySpeed = -3;
+				player.moving = true;
+				break;
+			case 40:
+				player.ySpeed = 3;
+				player.moving = true;
+				break;
+		}
+		
+},false);
+window.addEventListener('keyup', function(e){
+		//alert(e.keyCode);
+		
+		switch(e.keyCode){
+			
+			case 39:
+				player.xSpeed = 0;
+				player.moving = false;
+				player.currentImage = 1;
+				break;
+			case 37:
+				player.xSpeed = 0;
+				player.moving = false;
+				player.currentImage = 1;
+				break;
+			case 38:
+				player.ySpeed = 0;
+				player.moving = false;
+				player.currentImage = 1;
+				break;
+			case 40:
+				player.ySpeed = 0;
+				player.moving = false;
+				player.currentImage = 1;
+				break;
+		}
+		
+},false);
+	
+	</script>
+
+</body>
+</html>

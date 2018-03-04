@@ -1,0 +1,75 @@
+<!doctype html>
+<html ng-app="test">
+<head>
+<title>Angular JS</title>
+<script src="angular.min.js"></script>
+</head>
+<body>
+	
+	<div ng-controller="control">
+		<b>Search:</b><br>
+		Address
+		<select ng-model="address">
+			<option value="" selected>All</option>
+			<option value="baesa">Baesa</option>
+			<option value="proj.8">Proj.8</option>
+		</select>
+		Name
+		<input type="text" ng-model="se.name">
+		<table border="1px">
+			<tr>	
+				<th>Name</th>
+				<th>Address</th>
+			</tr>
+			<tr ng-repeat="person in persons | filter:se | filter:address" class="data">
+				 <td>{{ person.name | uppercase }}</td> 
+				 <td>{{ person.address | uppercase }}</td>
+			</tr>
+		</table>
+		Add
+		<br>
+		<input type="text" ng-model="addName" placeholder="Name" required> <br>
+		<select ng-model="addAddress">
+			<option value="baesa" selected>Baesa</option>
+			<option value="proj.8">Proj.8</option>
+		</select>
+		<br>
+		<button ng-click="add()">Add</button>
+	</div>
+	
+	<script>
+		var app = angular.module('test', []);
+		app.controller('control', function($scope){
+			
+			
+			var json = {
+				all : [
+					{"name" : "dalida", "address" : "proj.8"},
+					{"name" : "tantan", "address" : "baesa"},
+					{"name" : "limco", "address" : "proj.8"},
+					{"name" : "banas", "address" : "baesa"},
+					{"name" : "rodil", "address" : "proj.8"},
+					{"name" : "lee", "address" : "baesa"},
+					{"name" : "cereso", "address" : "proj.8"},
+					{"name" : "cabanes", "address" : "baesa"}
+				]
+			}
+			
+			$scope.persons = json.all;
+			
+		
+			
+			$scope.add = function(){
+				var n = $scope.addName;
+				var a = $scope.addAddress;
+				
+				json.all.push({"name" : n, "address": a});
+				
+				
+			};
+			
+		});
+		document.write(Math.round(Math.random() * 1));
+	</script>
+	</body>
+</html>
