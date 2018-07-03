@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Memory Game</title>
+</head>
+<body>
+
+<script type="text/javascript">
+
+const canvas = document.createElement('canvas');
+const context = canvas.getContext('2d');
+
+const CANVAS_SIZE = 400;
+canvas.width = CANVAS_SIZE;
+canvas.height = CANVAS_SIZE;
+canvas.style.border = '1px solid black';
+document.body.append(canvas);
+
+function Tile(x, y, size, number){
+	this.x = x;
+	this.y = y;
+	this.size = size;
+	this.number = number;
+	this.reveal = false;
+
+	this.draw = function(){
+		context.fillStyle = 'blue';
+		context.fillRect(this.x, this.y, this.size, this.size);
+		if(this.reveal){
+			context.fillStyle = 'black';
+			context.font = '25px verdana';
+			context.fillText(this.number, this.x+this.size/2 , this.y+this.size/2);			
+		}
+	}
+
+	this.collide = function(pos){
+		return pos.x >= this.x && pos.x <= this.x + this.size &&
+			   pos.y >= this.y && pos.y <= this.y + this.size;
+	}
+
+}
+
+function Board(){
+	this.tiles = [];
+	this.tileSize = 0;
+	this.padding = 4;
+	this.chosen = [];
+	this.click = false;
+	this.timer = 0;
+	this.toClose = false;
+	this.toCloseTile = [];
+
+	this.createTiles = function(row, col){
+		if(row * col % 2 != 0){
+			console.log("Tiles must be divisible by 2");
+			return;
+		}
+
+		this.tileSize = CANVAS_SIZE / row;
+
+		let tempTiles = [];
+		for(let i=1; i<=row*col/2; i++){
+			tempTiles.push(i);
+			tempTiles.push(i);
+		}
+
+		let x = 0;
+		let y = 0;
+		for(let i=1; i<=row*col; i++){
+			let rand = Math.floor(Math.random()*tempTiles.length);
+			let num = tempTiles.splice(rand, 1)[0];
+			let tile = new Tile(x+(this.padding/2), y+(this.padding/2), this.tileSize-this.padding, num);
+			this.tiles.push(tile);
+			
+			x += this.tileSize;
+			if(i % col == 0){
+				x = 0;
+				y += this.tileSize;
+			}
+			
+		}
+
+	}
+
+	this.drawTiles = function(){
+		for(let i=0; i<this.tiles.length; i++){
+			this.tiles[i].draw();
+		}
+
+		if(this.toClose){
+			this.timer++;
+			if(this.timer > 100){
+				this.closeTileNow();
+				this.toCloseTile = [];
+				this.timer = 0;
+				this.toClose = false;
+			}
+		}
+
+	}
+
+	this.closeTileNow = function(){
+		for(let i=0; i<this.toCloseTile.length; i++){
+			this.toCloseTile[i].reveal = false;
+		}
+	}
+
+	this.move = function(pos){
+		for(let i=0; i<this.tiles.length; i++){
+			if(this.tiles[i].collide(pos) && !this.tiles[i].reveal){
+				this.tiles[i].reveal = true;
+				this.click++;
+				this.closeTileNow();
+				if(this.click < 2){
+					this.chosen.push(this.tiles[i]);
+				}else if(this.click == 2){
+					this.chosen.push(this.tiles[i]);
+					if(this.chosen[0].number != this.chosen[1].number){
+						this.toCloseTile.push(this.chosen[0]);
+						this.toCloseTile.push(this.chosen[1]);
+						this.toClose = true;
+					}
+					this.chosen = [];
+					this.click = 0;
+				}
+				break;
+			}
+		}
+	}
+
+}
+
+let board = new Board();
+
+function setUp(){
+
+	board.createTiles(4, 4);
+
+}
+
+function draw(){
+	context.clearRect(0, 0, canvas.width, canvas.height);
+	board.drawTiles();
+}
+
+setUp();
+setInterval(function(){
+	draw();
+}, 1);
+
+canvas.addEventListener("mouseup", function(e){
+	var pos = getPos(canvas, e);
+	board.move(pos);
+});
+
+function getPos(c, e){
+	var rect = c.getBoundingClientRect();
+	return {x:e.clientX - rect.left, y: e.clientY - rect.top};
+}
+
+</script>
+
+</body>
+</html>
