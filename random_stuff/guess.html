@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Mang Teryo Online Store</title>
+	
+	<style>
+		body{
+			margin: 0px;
+			padding: 0px;
+			background-color: lightgrey;
+		}
+		#nav > ul > li{
+			list-style-type: none;
+			display: inline;
+			padding: 5px;
+		}
+		#nav > ul > li > a{
+			color: white;
+			text-decoration: none;
+		}
+		#nav > ul > li > a:hover{
+			color: orange;
+			text-decoration: underline;
+		}
+		#nav{
+			background-color: blue;
+			padding: 2px;
+		}
+		footer{
+			color: white;
+			background-color: blue;
+			padding: 5px;
+			width: 90%;
+			margin: auto;
+			clear: both;
+		}
+		#wrapper{
+			width: 90%;
+			margin: auto;
+			padding: 5px;
+			font-family: sans-serif;
+			background-color: white;
+		}
+		#content{
+			width: 60%;
+			float: left;
+			margin-right: 50px;
+			text-align: center;
+		}
+		#side{
+			width: 30%;
+			background-color: white;
+			float: left;
+			text-align: center;
+			box-shadow: 2px 2px 2px 2px grey;
+		}
+		@media screen and (max-width: 580px){
+			#wrapper{
+				width: 100%;
+			}
+			footer{
+				width: 100%;
+			}
+			#content{
+				width: 100%;
+			}
+			#side{
+				width: 100%;
+			}
+			#nav > ul > li{
+				display: block;
+			}
+			#nav > ul > li > a{
+				text-align: center;
+				display: block;
+			}
+		}
+	</style>
+	
+</head>
+<body>
+	
+	<header>
+		<div id="nav">
+			<ul>
+				<li><a href="#">Home</a></li>
+				<li><a href="#">About us</a></li>
+				<li><a href="#">Contact us</a></li>
+			</ul>
+		</div>
+		
+	</header>
+	
+	<div id="wrapper">
+		
+		<h2 style="text-align: center;">Welcome to Mang Teryo Online Shop</h2>
+		<hr />
+		
+		<div id="content">
+			<p style="font-size: 1.5em; font-family: calibre;">Easy to buy and low price with quality products!</p>
+			<p>
+				Mang Teryo quality products is best known to all leading online market.
+			</p>
+		</div>
+		
+		<div id="side">
+			<p style="background-color: lightblue; padding: 3px 0px"><b>Categories</b></p>
+			<a href="#">Books</a> <br>
+			<a href="#">Cosmetics</a> <br>
+			<a href="#">Gadgets</a> <br>
+			<br>
+		</div>
+		<p style="clear: both;">
+		<br>
+			<marquee><i>New Samsung S7 is now available in this site. What are you waiting for? buy now!</i></marquee>
+		</p>
+	</div>
+	
+	<footer>
+		Copy Rights &copy; Mang Teryo 2017
+	</footer>
+	
+</body>
+</html>

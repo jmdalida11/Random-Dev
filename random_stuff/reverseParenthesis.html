@@ -1,0 +1,53 @@
+<html>
+<body>
+<input type="text" onblur="r(this)" id="x">
+<p id="r"></p>
+<script>
+
+	function r(w){
+		document.getElementById('r').innerHTML = reverseParenthesis(w.value);
+	}
+	
+	function reverseParenthesis(word){
+		
+		var mainStack = [];
+		var reverseWord = "";
+		
+	
+		for(var i=0; i<word.length; i++){
+			
+			if(word[i] == "("){
+				
+				var newStack = [];
+				mainStack.push(newStack);
+				
+			}else if(word[i] == ")"){
+				
+				if(mainStack.length == 1){
+					while(mainStack[0].length > 0){
+						reverseWord += mainStack[0].pop();
+					}
+					mainStack.pop();
+				}else if(mainStack.length > 1){
+					var inner = mainStack.pop();
+					var outer = mainStack.pop();
+					
+					while(inner.length > 0){
+						outer.push(inner.pop());
+					}
+					mainStack.push(outer);
+				}
+			}else if(mainStack.length > 0){
+					mainStack[mainStack.length-1].push(word[i]);
+			}else if(mainStack.length == 0){
+					reverseWord += word[i];
+			}
+		}
+		
+		return reverseWord;
+	}
+	
+</script>
+
+</body>
+</html>

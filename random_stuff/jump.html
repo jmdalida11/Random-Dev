@@ -1,0 +1,283 @@
+<!doctype html>
+<html>
+<head>
+<title>Jump</title>
+</head>
+<body>
+	
+	<canvas id="myCanvas" width="250" height="300"></canvas>
+	
+	
+	<script>
+		
+		var canvas = document.getElementById('myCanvas');
+		var context = canvas.getContext('2d');
+		
+		function Player(x,y,w,h){
+			
+			this.x = x;
+			this.y = y;
+			this.w = w;
+			this.h = h;
+			
+			this.start = true;
+			this.inGround = true;
+			this.gravity = 2;
+			this.MAX_VEL = 5;
+			
+			this.xSpeed = 0;
+			this.ySpeed = 0;
+			
+			this.update = function(){
+				
+				this.x += this.xSpeed;
+				
+				if(this.x <= 0){
+					this.x = 0;
+				}
+				
+				if(this.x + this.w >= canvas.width){
+					this.x = canvas.width - this.w - 2;
+				}
+
+				this.pullGravity();
+				
+			}
+			
+			this.pullGravity = function(){
+				
+				if(!this.inGround){
+					if(!this.start)
+					this.ySpeed += this.gravity;
+				}else{
+					if(this.start)
+						this.ySpeed = 0;
+					else
+						this.ySpeed = 1;
+				}
+				
+				if(this.ySpeed > this.MAX_VEL){
+					this.ySpeed = this.MAX_VEL;
+				}
+				
+				this.y += this.ySpeed;
+				
+				
+			}
+			
+			this.render = function(){
+				
+				context.fillStyle = 'blue';
+				
+				context.fillRect(this.x,this.y,this.w,this.h);
+				
+			}
+			
+			
+			
+			
+		
+		}
+		
+		function Paddle(x,y){
+		
+			this.x = x;
+			this.y = y;
+			this.w = 50;
+			this.h = 10;
+			this.speed = 1;
+			
+			
+			this.update = function(){
+				this.y += this.speed;
+				
+				if(this.y >= canvas.height){
+					this.y = 0;
+					this.x = Math.round(Math.random() * (canvas.width-50));
+				}
+				
+			}
+			
+			this.render = function(){
+				context.fillStyle = 'green';
+				context.fillRect(this.x,this.y,this.w,this.h);
+			}
+			
+		}
+		
+		function Coin(){
+			
+			
+			
+		}
+		
+		var player;
+		var paddles = [];
+		var gameOver = false;
+		var score = 0;
+		var timer = 0;
+		function init(){
+			player = new Player(canvas.width /2-(10/2) ,canvas.height - 25,10,25);
+			
+			for(var i=0; i<6; i++){
+				paddles[i] = new Paddle(Math.round(Math.random() * (canvas.width-50)),i * 50 + 50);
+			}
+			
+		}
+		
+		function update(){
+			
+			
+			if(!gameOver)
+				player.update();
+
+			
+			if(!gameOver && !player.start){
+				timer++;
+				
+				if(timer > 10){
+					score++;
+					timer = 0;
+				}
+				
+			}
+			inTopOfPaddle();
+			for(var i=0; i<paddles.length; i++){
+				if(!player.start && !gameOver)
+					paddles[i].update();
+			}
+			
+			
+			if(player.y > canvas.height){
+				gameOver = true;
+			}
+			
+		}
+		
+		function render(){
+			
+			context.clearRect(0,0,canvas.width, canvas.height);
+			
+			context.fillStyle = 'black';
+			context.fillRect(0,0,canvas.width,canvas.height);
+			
+			for(var i=0; i<paddles.length; i++){
+				paddles[i].render();
+			}
+			
+			player.render();
+			
+			if(gameOver){
+				context.fillStyle = 'yellow';
+				context.font = '20px Georgia';
+				context.fillText("Game Over!", canvas.width / 2 - 50, canvas.height / 2);
+			}
+			context.fillStyle = 'yellow';
+				context.font = '15px Georgia';
+				context.fillText("Score: " + score, 25, 25);
+			
+				
+		}
+		
+		 function inTopOfPaddle(){
+			
+			var flag = false;
+			
+			for(var i=0; i<paddles.length; i++){
+				
+				var pad = paddles[i];
+				
+				if(player.x >= pad.x && player.x <= pad.x + pad.w){
+					
+					if(player.y + player.h >= pad.y && player.y + player.h <= pad.y + pad.h){
+						flag = true;
+						break;
+					}
+					
+				}
+			}
+			
+			player.inGround = flag;
+			
+		  }
+		
+		window.addEventListener('keydown',function(e){
+			
+			//alert(e.keyCode);
+			switch(e.keyCode){
+				
+				case 37:
+						if(player.inGround)
+							player.xSpeed = -8;
+						else
+							player.xSpeed = -12;
+				       break;
+					   
+				case 39:
+						if(player.inGround)
+							player.xSpeed = 8;
+						else
+							player.xSpeed = 12;
+						break;
+			}
+			
+		},false);
+		
+		window.addEventListener('keyup',function(e){
+			
+			//alert(e.keyCode);
+			switch(e.keyCode){
+				case 38:
+				case 32: 
+						
+						if(player.inGround || player.start){
+							player.ySpeed = -25;
+							player.inGround = false;
+						
+						}
+						if(player.start)
+							player.start = false;
+						break;
+				case 37:
+				
+						player.xSpeed = 0;
+						
+				       break;
+					   
+				case 39:
+						player.xSpeed = 0;
+						break;
+			}
+			
+		},false);
+		
+		init();
+		setInterval(function(){
+			
+			update();
+			render();
+		
+		}, 1000/30);
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</script>
+	
+</body>
+</html>
