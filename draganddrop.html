@@ -1,0 +1,166 @@
+<html>
+  <body>
+    <head>
+      <style>
+        body {
+          overflow: hidden;
+          display: flex;
+          justify-content: center;
+        }
+        .slot {
+          width: 200px;
+          height: 200px;
+          border: 1px solid green;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          background-color: lightgray;
+        }
+        #container {
+          width: 1000px;
+          height: 90vh;
+          border: 5px solid red;
+          padding: 10px;
+          display: flex;
+          flex-direction: column;
+          gap: 200px;
+        }
+      </style>
+    </head>
+    <div id="container">
+      <div style="display: flex; justify-content: space-between">
+        <div id="slot1" class="slot">
+          <div
+            id="card"
+            style="width: 150px; height: 150px; background-color: blue"
+          ></div>
+        </div>
+        <div id="slot2" class="slot"></div>
+        <div id="slot3" class="slot"></div>
+      </div>
+      <div
+        style="display: flex; justify-content: space-between; margin-top: 20px"
+      >
+        <div id="slot4" class="slot"></div>
+        <div id="slot5" class="slot"></div>
+        <div id="slot6" class="slot"></div>
+      </div>
+    </div>
+    <script>
+      function aabb(a, b) {
+        return (
+          a.x < b.x + b.width &&
+          a.x + a.width > b.x &&
+          a.y < b.y + b.height &&
+          a.y + a.height > b.y
+        );
+      }
+
+      const moveAt = (item, x, y) => {
+        item.style.left = x + "px";
+        item.style.top = y + "px";
+      };
+
+      const containerRect = document
+        .getElementById("container")
+        .getBoundingClientRect();
+      const slots = document.getElementsByClassName("slot");
+      let currentSlot = document.getElementById("slot1");
+
+      function dragAndDrop(id) {
+        const item = document.getElementById(id);
+
+        item.onmousedown = (event) => {
+          const rect = item.getBoundingClientRect();
+          const width = rect.width;
+          const height = rect.height;
+          const addedWidth = width + 20;
+          const addedHeight = height + 20;
+
+          item.style.position = "absolute";
+          item.style.zIndex = 1000;
+          item.style.width = addedWidth + "px";
+          item.style.height = addedHeight + "px";
+
+          let nextXX = event.pageX - addedWidth / 2;
+          let nextYY = event.pageY - addedHeight / 2;
+          if (nextXX + addedWidth > containerRect.x + containerRect.width) {
+            nextXX = containerRect.x + containerRect.width - addedWidth - 5;
+          } else if (nextXX < containerRect.x) {
+            nextXX = containerRect.x + 5;
+          }
+          if (nextYY + addedHeight > containerRect.y + containerRect.height) {
+            nextYY = containerRect.y + containerRect.height - addedHeight - 5;
+          } else if (nextYY < containerRect.y) {
+            nextYY = containerRect.y + 5;
+          }
+          moveAt(item, nextXX, nextYY);
+
+          for (const slot of slots) {
+            if (
+              aabb(slot.getBoundingClientRect(), item.getBoundingClientRect())
+            ) {
+              slot.style.backgroundColor = "orange";
+            } else {
+              slot.style.backgroundColor = "yellow";
+            }
+          }
+
+          const onMouseMove = (mouseMoveEvent) => {
+            let nextX = mouseMoveEvent.pageX - addedWidth / 2;
+            let nextY = mouseMoveEvent.pageY - addedHeight / 2;
+            if (nextX + addedWidth > containerRect.x + containerRect.width) {
+              nextX = containerRect.x + containerRect.width - addedWidth - 5;
+            } else if (nextX < containerRect.x) {
+              nextX = containerRect.x + 5;
+            }
+            if (nextY + addedHeight > containerRect.y + containerRect.height) {
+              nextY = containerRect.y + containerRect.height - addedHeight - 5;
+            } else if (nextY < containerRect.y) {
+              nextY = containerRect.y + 5;
+            }
+            moveAt(item, nextX, nextY);
+            for (const slot of slots) {
+              if (
+                aabb(slot.getBoundingClientRect(), item.getBoundingClientRect())
+              ) {
+                slot.style.backgroundColor = "orange";
+              } else {
+                slot.style.backgroundColor = "yellow";
+              }
+            }
+          };
+
+          document.addEventListener("mousemove", onMouseMove);
+          document.onmouseup = function () {
+            for (const slot of slots) {
+              if (
+                aabb(slot.getBoundingClientRect(), item.getBoundingClientRect())
+              ) {
+                currentSlot = slot;
+              }
+              slot.style.backgroundColor = "lightgray";
+            }
+
+            item.style.width = width + "px";
+            item.style.height = height + "px";
+            item.style.removeProperty("position");
+            item.style.removeProperty("z-index");
+            item.style.removeProperty("top");
+            item.style.removeProperty("left");
+            currentSlot.appendChild(item);
+
+            document.removeEventListener("mousemove", onMouseMove);
+            document.onmouseup = null;
+          };
+        };
+
+        item.ondragstart = () => {
+          return false;
+        };
+      }
+
+      dragAndDrop("card");
+    </script>
+  </body>
+</html>
